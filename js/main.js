@@ -1,4 +1,10 @@
 var game;
+let playerOneState = {
+  direction: null,
+};
+let playerTwoState = {
+  direction: null,
+};
 window.onload = function() {
   const config = {
     type: Phaser.AUTO,

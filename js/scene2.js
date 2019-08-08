@@ -5,6 +5,7 @@ class scene2 extends Phaser.Scene {
   preload() {
     this.load.image('player1', 'images/player1.png');
     this.load.image('ball', 'images/face.png');
+    this.load.audio('pop', ['sounds/pop.wav']);
   }
   create() {
     /* GRID */
@@ -12,16 +13,43 @@ class scene2 extends Phaser.Scene {
     // const agrid = new AlignGrid({ scene: this, rows: 11, cols: 11 });
     // agrid.showNumbers();
 
+    /* SCORE */
+    const score = {
+      player1: 0,
+      player2: 0,
+    };
     /* EVENT LISTENERS */
-    this.input.keyboard.on('keydown_W', this.movePlayerOneUp, this);
-    this.input.keyboard.on('keydown_S', this.movePlayerOneDown, this);
+    this.input.keyboard.on('keydown_W', this.movePlayerOneUp);
+    this.input.keyboard.on('keyup_W', this.stopMovingPlayerOne);
 
-    this.input.keyboard.on('keydown_UP', this.movePlayerTwoUp, this);
-    this.input.keyboard.on('keydown_DOWN', this.movePlayerTwoDown, this);
+    this.input.keyboard.on('keydown_S', this.movePlayerOneDown);
+    this.input.keyboard.on('keyup_S', this.stopMovingPlayerOne);
+
+    this.input.keyboard.on('keydown_UP', this.movePlayerTwoUp);
+    this.input.keyboard.on('keyup_UP', this.stopMovingPlayerTwo);
+
+    this.input.keyboard.on('keydown_DOWN', this.movePlayerTwoDown);
+    this.input.keyboard.on('keyup_DOWN', this.stopMovingPlayerTwo);
 
     /* TEXT HEADING */
-    this.text1 = this.add.text(game.config.width / 2, 50, 'pong');
+    this.text1 = this.add.text(game.config.width / 2, 50, 'pong', {
+      font: '30px',
+    });
     this.text1.setOrigin(0.5, 0.5);
+    this.score1 = this.add.text(60, 50, `score: ${score.player1}`, {
+      font: '20px',
+    });
+    this.score2 = this.add.text(
+      game.config.width - 160,
+      50,
+      `score: ${score.player2}`,
+      {
+        font: '20px',
+      }
+    );
+
+    // this.score1 = this.add.text(game.config.width / 2, 50, 'pong');
+    // this.score1.setOrigin(0.5, 0.5);
 
     /* SET UP PLAYERS */
 
@@ -48,18 +76,27 @@ class scene2 extends Phaser.Scene {
     /* BALL */
     this.createBall(game.config.width / 2, game.config.height / 2);
   }
+
+  stopMovingPlayerOne() {
+    playerOneState.direction = null;
+  }
+  stopMovingPlayerTwo() {
+    playerTwoState.direction = null;
+  }
+
   movePlayerOneUp() {
-    this.player1.y -= 50;
+    playerOneState.direction = 'up';
   }
   movePlayerOneDown() {
-    this.player1.y += 50;
+    playerOneState.direction = 'down';
   }
   movePlayerTwoUp() {
-    this.player2.y -= 50;
+    playerTwoState.direction = 'up';
   }
   movePlayerTwoDown() {
-    this.player2.y += 50;
+    playerTwoState.direction = 'down';
   }
+
   createBall(x, y) {
     const ball = this.physics.add.sprite(
       game.config.width / 2,
@@ -67,15 +104,33 @@ class scene2 extends Phaser.Scene {
       'ball'
     );
     ball.body.collideWorldBounds = true;
-    this.physics.add.collider(this.player1, ball);
-    this.physics.add.collider(this.player2, ball);
+    // ball.body.bounce.y = 1;
+    // console.log('ball body', ball.body);
+    this.physics.add.collider(this.player1, ball, () =>
+      this.game.sound.play('pop')
+    );
+    this.physics.add.collider(this.player2, ball, () =>
+      this.game.sound.play('pop')
+    );
 
-    ball.setVelocity(600, 0);
+    ball.setVelocity(600, 100);
     ball.setBounce(1, 0);
+    ball.body.setBounce(1, 1);
     ball.setGravityX(200); // green line shows where the gravity's going
+    return ball;
   }
 
   update() {
+    if (playerOneState.direction === 'up') {
+      this.player1.y -= 10;
+    } else if (playerOneState.direction === 'down') {
+      this.player1.y += 10;
+    } else if (playerTwoState.direction === 'up') {
+      this.player2.y -= 10;
+    } else if (playerTwoState.direction === 'down') {
+      this.player2.y += 10;
+    }
+    // if (this.input.keyboard._e)
     // if (this.ball.body.blocked.left) {
     //   console.log('player 2 scores');
     // }
