@@ -13,11 +13,6 @@ class scene2 extends Phaser.Scene {
     // const agrid = new AlignGrid({ scene: this, rows: 11, cols: 11 });
     // agrid.showNumbers();
 
-    /* SCORE */
-    const score = {
-      player1: 0,
-      player2: 0,
-    };
     /* EVENT LISTENERS */
     this.input.keyboard.on('keydown_W', this.movePlayerOneUp);
     this.input.keyboard.on('keyup_W', this.stopMovingPlayerOne);
@@ -36,6 +31,9 @@ class scene2 extends Phaser.Scene {
       font: '30px',
     });
     this.text1.setOrigin(0.5, 0.5);
+
+    /* SCORE */
+
     this.score1 = this.add.text(60, 50, `score: ${score.player1}`, {
       font: '20px',
     });
@@ -47,9 +45,6 @@ class scene2 extends Phaser.Scene {
         font: '20px',
       }
     );
-
-    // this.score1 = this.add.text(game.config.width / 2, 50, 'pong');
-    // this.score1.setOrigin(0.5, 0.5);
 
     /* SET UP PLAYERS */
 
@@ -98,14 +93,13 @@ class scene2 extends Phaser.Scene {
   }
 
   createBall(x, y) {
-    const ball = this.physics.add.sprite(
+    ball = this.physics.add.sprite(
       game.config.width / 2,
       game.config.height / 2,
       'ball'
     );
     ball.body.collideWorldBounds = true;
-    // ball.body.bounce.y = 1;
-    // console.log('ball body', ball.body);
+
     this.physics.add.collider(this.player1, ball, () =>
       this.game.sound.play('pop')
     );
@@ -113,7 +107,7 @@ class scene2 extends Phaser.Scene {
       this.game.sound.play('pop')
     );
 
-    ball.setVelocity(600, 100);
+    ball.setVelocity(3000, 100);
     ball.setBounce(1, 0);
     ball.body.setBounce(1, 1);
     ball.setGravityX(200); // green line shows where the gravity's going
@@ -130,16 +124,11 @@ class scene2 extends Phaser.Scene {
     } else if (playerTwoState.direction === 'down') {
       this.player2.y += 10;
     }
-    // if (this.input.keyboard._e)
-    // if (this.ball.body.blocked.left) {
-    //   console.log('player 2 scores');
-    // }
-    // const p1Keys = this.input.keyboard.createCursorKeys();
-    // const p2Keys = this.input.keyboard.createCursorKeys();
-    // if (p2Keys.down.isDown) {
-    //   this.player2.y += 10;
-    // } else if (p2Keys.up.isDown) {
-    //   this.player2.y -= 10;
-    // }
+    if (ball.body.blocked.right) {
+      this.score1.text = `score: ${(score.player1 += 1)}`;
+    }
+    if (ball.body.blocked.left) {
+      this.score2.text = `score: ${(score.player2 += 1)}`;
+    }
   }
 }
