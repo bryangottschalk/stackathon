@@ -1,29 +1,44 @@
+/* eslist-disable no-undef */
+
 class SceneMain extends Phaser.Scene {
   constructor() {
     super('SceneMain');
-    // state = {
-    //   score: {
-    //     player1: 0,
-    //     player2: 0,
-    //   },
-    //   playerOneState: {
-    //     direction: null,
-    //   },
-    //   playerTwoState: {
-    //     direction: null,
-    //   },
-    // };
+    this.state = {
+      score: {
+        player1: 0,
+        player2: 0,
+      },
+      scoreText: {
+        player1: null,
+      },
+      playerOneState: {
+        direction: null,
+      },
+      playerTwoState: {
+        direction: null,
+      },
+      ball: {},
+    };
   }
   preload() {
+    console.log('SceneMain', this);
+    this.disableVisibilityChange = true;
     this.load.image('player1', 'images/player1.png');
     this.load.image('ball', 'images/face.png');
     this.load.audio('pop', ['sounds/pop.wav']);
     console.log('socket in phaser', socket);
     console.log('io in phaser', io);
 
-    socket.on('p1direction', direction => {
-      direction = playerOneState.direction;
-      console.log('direction', direction);
+    this.input.keyboard.on('keydown_UP', () => this.setPlayerMoveState('up'));
+    this.input.keyboard.on('keyup_UP', () => this.setPlayerMoveState(null));
+
+    this.input.keyboard.on('keydown_DOWN', () =>
+      this.setPlayerMoveState('down')
+    );
+    this.input.keyboard.on('keyup_DOWN', () => this.setPlayerMoveState(null));
+
+    socket.on('state', state => {
+      this.state = state;
     });
   }
 
@@ -34,17 +49,6 @@ class SceneMain extends Phaser.Scene {
     // agrid.showNumbers();
 
     /* EVENT LISTENERS */
-    this.input.keyboard.on('keydown_W', this.movePlayerOneUp);
-    this.input.keyboard.on('keyup_W', this.stopMovingPlayerOne);
-
-    this.input.keyboard.on('keydown_S', this.movePlayerOneDown);
-    this.input.keyboard.on('keyup_S', this.stopMovingPlayerOne);
-
-    this.input.keyboard.on('keydown_UP', this.movePlayerTwoUp);
-    this.input.keyboard.on('keyup_UP', this.stopMovingPlayerTwo);
-
-    this.input.keyboard.on('keydown_DOWN', this.movePlayerTwoDown);
-    this.input.keyboard.on('keyup_DOWN', this.stopMovingPlayerTwo);
 
     /* TEXT HEADING */
     this.text1 = this.add.text(game.config.width / 2, 50, 'pong', {
@@ -54,9 +58,12 @@ class SceneMain extends Phaser.Scene {
 
     /* SCORE */
 
-    this.score1 = this.add.text(60, 50, `score: ${score.player1}`, {
+    this.score1 = this.add.text(60, 50, `score: ${this.state.score.player1}`, {
       font: '20px',
     });
+    // console.log('TCL: SceneMain -> create -> this.score1', this.score1);
+    // console.log('TCL: SceneMain -> create -> score1 ', score1);
+
     this.score2 = this.add.text(
       game.config.width - 160,
       50,
@@ -92,24 +99,9 @@ class SceneMain extends Phaser.Scene {
     this.createBall(game.config.width / 2, game.config.height / 2);
   }
 
-  stopMovingPlayerOne() {
-    playerOneState.direction = null;
-  }
-  stopMovingPlayerTwo() {
-    playerTwoState.direction = null;
-  }
-
-  movePlayerOneUp() {
-    playerOneState.direction = 'up';
-  }
-  movePlayerOneDown() {
-    playerOneState.direction = 'down';
-  }
-  movePlayerTwoUp() {
-    playerTwoState.direction = 'up';
-  }
-  movePlayerTwoDown() {
-    playerTwoState.direction = 'down';
+  setPlayerMoveState(dir) {
+    // this.state.playerOneState.direction = dir;
+    socket.emit('dir', dir);
   }
 
   createBall(x, y) {
@@ -135,17 +127,26 @@ class SceneMain extends Phaser.Scene {
   }
 
   update() {
-    if (playerOneState.direction === 'up') {
+    if (this.state.playerOneState.direction === 'up') {
       this.player1.y -= 10;
-    } else if (playerOneState.direction === 'down') {
+    } else if (this.state.playerOneState.direction === 'down') {
       this.player1.y += 10;
-    } else if (playerTwoState.direction === 'up') {
-      this.player2.y -= 10;
-    } else if (playerTwoState.direction === 'down') {
-      this.player2.y += 10;
     }
+
     if (ball.body.blocked.right) {
-      this.score1.text = `score: ${(score.player1 += 1)}`;
+      // this.state.score.player1 += 1;
+      console.log(this.state.score.player1);
+      // this.score1 = this.add.text(
+      //   60,
+      //   50,
+      //   `score: ${this.state.score.player1}`,
+      //   {
+      //     font: '20px',
+      //   }
+      // );
+      socket.emit('scored');
+      this.score1.setText(`score: ${this.state.score.player1}`);
+      // console.log('this', this);
     }
     if (ball.body.blocked.left) {
       this.score2.text = `score: ${(score.player2 += 1)}`;

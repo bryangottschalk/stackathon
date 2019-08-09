@@ -4,10 +4,7 @@ const socket = io();
 
 // event listener to receive events from the server
 // pass in the emitted message you want to receive from the server
-console.log('score', score);
-console.log('this', this);
 const clientGame = document.getElementById('phaser-game');
-console.log('TCL: clientGame', clientGame);
 
 // const p1direction = playerOneState.direction;
 
@@ -35,7 +32,10 @@ const chatSubmitted = e => {
 };
 
 document.querySelector('#chat-form').addEventListener('submit', chatSubmitted);
-// document.addEventListener('keydown', event => {});
+
+// const sendDirection = e => {};
+
+// document.addEventListener('keydown', sendDirection);
 
 //GOAL # 1
 // send direction to server for keypresses

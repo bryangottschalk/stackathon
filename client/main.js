@@ -26,4 +26,5 @@ window.onload = function() {
     },
   };
   game = new Phaser.Game(config);
+  console.log('TCL: window.onload -> game', game);
 };
