@@ -1,12 +1,32 @@
 class SceneMain extends Phaser.Scene {
   constructor() {
     super('SceneMain');
+    // state = {
+    //   score: {
+    //     player1: 0,
+    //     player2: 0,
+    //   },
+    //   playerOneState: {
+    //     direction: null,
+    //   },
+    //   playerTwoState: {
+    //     direction: null,
+    //   },
+    // };
   }
   preload() {
     this.load.image('player1', 'images/player1.png');
     this.load.image('ball', 'images/face.png');
     this.load.audio('pop', ['sounds/pop.wav']);
+    console.log('socket in phaser', socket);
+    console.log('io in phaser', io);
+
+    socket.on('p1direction', direction => {
+      direction = playerOneState.direction;
+      console.log('direction', direction);
+    });
   }
+
   create() {
     /* GRID */
 
