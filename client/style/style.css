@@ -1,3 +1,16 @@
+body {
+  font-family: sans-serif;
+}
 li {
+  padding-top: 5px;
   list-style: none;
+}
+
+ul {
+  margin: 0;
+  padding: 10px 0px 0px 0px;
+}
+
+h1 {
+  color: green;
 }

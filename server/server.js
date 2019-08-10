@@ -31,14 +31,14 @@ io.on('connection', socket => {
   if (!state.playerIds.includes(socket.id)) {
     state.playerIds.push(socket.id);
     state.playerCount++;
-    console.log('new num players', state.playerCount);
+    console.log('num players', state.playerCount);
   }
   socket.on('disconnect', () => {
     console.log('a player disconnected');
     const i = state.playerIds.indexOf(socket.id);
     state.playerIds.splice(i, 1);
     state.playerCount--;
-    console.log('new num players:', state.playerCount);
+    console.log('num players:', state.playerCount);
     //reset score when lobby is empty
     if (state.playerCount === 0) {
       state.score = {
@@ -51,7 +51,7 @@ io.on('connection', socket => {
   // handle messages from any client
   socket.emit(
     'message',
-    'Welcome from the server! Trash talk your opponent below.'
+    `Welcome from the server! Kindly trash talk your opponent below if you'd like.`
   ); // emits to one person
   // socket.emit('state', state);
   socket.on('message', text => {
@@ -81,7 +81,7 @@ io.on('connection', socket => {
 
 setInterval(() => {
   io.emit('state', state);
-}, 10);
+}, 100);
 
 server.on('error', err => {
   console.error('Server error:', err);

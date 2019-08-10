@@ -48,7 +48,7 @@ class SceneMain extends Phaser.Scene {
     // agrid.showNumbers();
 
     /* TEXT HEADING */
-    this.text1 = this.add.text(game.config.width / 2, 50, 'pong', {
+    this.text1 = this.add.text(game.config.width / 2, 50, 'emojipong', {
       font: '30px',
     });
     this.text1.setOrigin(0.5, 0.5);
