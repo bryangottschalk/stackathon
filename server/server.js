@@ -81,7 +81,7 @@ io.on('connection', socket => {
 
 setInterval(() => {
   io.emit('state', state);
-}, 100);
+}, 10);
 
 server.on('error', err => {
   console.error('Server error:', err);
