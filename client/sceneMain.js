@@ -147,7 +147,10 @@ class SceneMain extends Phaser.Scene {
     ball.setGravityX(200); // green line on dev mode shows where the gravity's going
   }
 
+  // eslint-disable-next-line complexity
   update() {
+    this.score1.setText(`score: ${this.state.score.player1}`);
+    this.score2.setText(`score: ${this.state.score.player2}`);
     if (this.state.playerOneState.direction === 'up') {
       this.player1.y -= 10;
     } else if (this.state.playerOneState.direction === 'down') {
@@ -161,13 +164,18 @@ class SceneMain extends Phaser.Scene {
       ball.y = this.state.ball.y;
     }
 
+    if (this.isFirstPlayer && this.state.playerCount > 1) {
+      if (ball.body.blocked.right) {
+        socket.emit('p1scored');
+        // this.score1.setText(`score: ${this.state.score.player1}`);
+      }
+    } else {
+      // is player 2
+      // eslint-disable-next-line no-lonely-if
+      if (ball.body.blocked.left && this.state.playerCount > 1) {
+        socket.emit('p2scored');
+      }
+    }
     // );
-    // if (this.state.ball.body.blocked.right) {
-    //   socket.emit('scored');
-    //   this.score1.setText(`score: ${this.state.score.player1}`);
-    // }
-    // if (this.state.ball.body.blocked.left) {
-    //   this.score2.text = `score: ${(score.player2 += 1)}`;
-    // }
   }
 }

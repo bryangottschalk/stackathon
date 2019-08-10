@@ -57,8 +57,11 @@ io.on('connection', socket => {
     console.log(dir);
     state.playerOneState.direction = dir;
   });
-  socket.on('scored', () => {
+  socket.on('p1scored', () => {
     state.score.player1++;
+  });
+  socket.on('p2scored', () => {
+    state.score.player2++;
   });
   socket.on('ballMoved', (ballX, ballY) => {
     state.ball.x = ballX;
