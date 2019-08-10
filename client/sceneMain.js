@@ -100,7 +100,6 @@ class SceneMain extends Phaser.Scene {
   }
 
   setPlayerMoveState(dir) {
-    console.log('TCL: setPlayerMoveState -> dir', dir);
     socket.emit('dir', dir, this.isFirstPlayer);
   }
 

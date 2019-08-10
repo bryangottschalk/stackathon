@@ -38,7 +38,7 @@ io.on('connection', socket => {
     const i = state.playerIds.indexOf(socket.id);
     state.playerIds.splice(i, 1);
     state.playerCount--;
-    console.log('new num players', state.playerCount);
+    console.log('new num players:', state.playerCount);
   });
 
   // handle messages from any client
@@ -56,7 +56,6 @@ io.on('connection', socket => {
     } else {
       state.playerTwoState.direction = dir;
     }
-    console.log('dir:', dir, 'isFirstPlayer?', isFirstPlayer);
   });
   socket.on('p1scored', () => {
     state.score.player1++;
