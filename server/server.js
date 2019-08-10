@@ -16,7 +16,6 @@ const state = {
   },
   playerOneState: {
     direction: null,
-    connected: false,
   },
   playerTwoState: {
     direction: null,
@@ -29,20 +28,7 @@ const state = {
   },
 };
 
-// function Player(id, x, y) {
-//   this.id = id;
-//   this.x = x;
-//   this.y = y;
-// }
-
 io.on('connection', socket => {
-  // socket.on('start', data => {
-  //   //make a new player --> client sends in its x and y position
-  //   console.log(`id: ${socket.id} x: ${data.x} y: ${data.y}`);
-
-  //   const player = new Player(socket.id, data.x, data.y);
-  //   players.push(player);
-  // });
   console.log('Someone connected', socket.id);
 
   if (!state.playerIds.includes(socket.id)) {
@@ -70,8 +56,6 @@ io.on('connection', socket => {
   socket.on('dir', dir => {
     console.log(dir);
     state.playerOneState.direction = dir;
-    // io.emit(state)
-    // io.emit('p1direction', dir);
   });
   socket.on('scored', () => {
     state.score.player1++;
@@ -79,18 +63,8 @@ io.on('connection', socket => {
   socket.on('ballMoved', (ballX, ballY) => {
     state.ball.x = ballX;
     state.ball.y = ballY;
-    console.log('x:', state.ball.x);
-    console.log('y:', state.ball.y);
-    // console.log('x:', ballX, 'y:', ballY);
-    // console.log('in ballmoved', coordinates);
-
-    // state.ball.y = coordinates.y;
   });
 });
-
-// io.on('scored', socket => {
-
-// })
 
 setInterval(() => {
   io.emit('state', state);
@@ -104,7 +78,3 @@ server.listen(8081, function() {
   // Listens to port 8081
   console.log('Listening on ' + server.address().port);
 });
-
-// will need a timer to send the state to clients
-// will need to run physics of ball on the server side
-// can you run phaser on the server?

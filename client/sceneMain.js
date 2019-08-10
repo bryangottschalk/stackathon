@@ -14,7 +14,6 @@ class SceneMain extends Phaser.Scene {
       playerTwoState: {
         direction: null,
       },
-      // playerIds: [],
       playerCount: 0,
       playerId: null,
       ball: {
@@ -28,17 +27,12 @@ class SceneMain extends Phaser.Scene {
     this.load.image('player1', 'images/player1.png');
     this.load.image('ball', 'images/face.png');
     this.load.audio('pop', ['sounds/pop.wav']);
-    // console.log('socket in phaser', socket);
-    // console.log('io in phaser', io);
-
     this.input.keyboard.on('keydown_UP', () => this.setPlayerMoveState('up'));
     this.input.keyboard.on('keyup_UP', () => this.setPlayerMoveState(null));
-
     this.input.keyboard.on('keydown_DOWN', () =>
       this.setPlayerMoveState('down')
     );
     this.input.keyboard.on('keyup_DOWN', () => this.setPlayerMoveState(null));
-
     socket.on('state', state => {
       this.state = state;
     });
@@ -50,11 +44,8 @@ class SceneMain extends Phaser.Scene {
     }
 
     /* GRID */
-
     // const agrid = new AlignGrid({ scene: this, rows: 11, cols: 11 });
     // agrid.showNumbers();
-
-    /* EVENT LISTENERS */
 
     /* TEXT HEADING */
     this.text1 = this.add.text(game.config.width / 2, 50, 'pong', {
@@ -102,7 +93,7 @@ class SceneMain extends Phaser.Scene {
     if (this.state.playerCount === 1) {
       this.createBall(game.config.width / 2, game.config.height / 2);
     } else {
-      //receive ball
+      //receive ball (player2)
       this.getBall();
     }
     // this.move
@@ -110,11 +101,12 @@ class SceneMain extends Phaser.Scene {
 
   setPlayerMoveState(dir) {
     console.log('TCL: setPlayerMoveState -> dir', dir);
-    // this.state.playerOneState.direction = dir;
     socket.emit('dir', dir);
   }
+
   getBall() {
-    //receives ball state from server
+    //player 2
+    //receives ball state from server and creates a new ball with those
     ball = this.physics.add.sprite(
       this.state.ball.x,
       this.state.ball.y,
@@ -140,8 +132,6 @@ class SceneMain extends Phaser.Scene {
       'ball'
     );
 
-    // const ballTween = this.add.tween(ball);
-    // console.log('TCL: createBall -> ballTween', ballTween);
     ball.body.collideWorldBounds = true;
 
     this.physics.add.collider(this.player1, ball, () =>
@@ -154,13 +144,8 @@ class SceneMain extends Phaser.Scene {
     ball.setVelocity(1000, 100);
     ball.setBounce(1, 0);
     ball.body.setBounce(1, 1);
-    ball.setGravityX(200); // green line shows where the gravity's going
-    // return this.state.ball;
+    ball.setGravityX(200); // green line on dev mode shows where the gravity's going
   }
-  // moveBall(x, y) {
-  //   const tween = this.add.tween(ball);
-  //   // console.log('TCL: moveBall -> tween', tween);
-  // }
 
   update() {
     if (this.state.playerOneState.direction === 'up') {
@@ -168,16 +153,13 @@ class SceneMain extends Phaser.Scene {
     } else if (this.state.playerOneState.direction === 'down') {
       this.player1.y += 10;
     }
-    // ball.x = this.state.ball.x;
-    // ball.y = this.state.ball.y;
+
     if (this.isFirstPlayer) {
       socket.emit('ballMoved', ball.x, ball.y);
     } else {
       ball.x = this.state.ball.x;
       ball.y = this.state.ball.y;
     }
-    // console.log(
-    //   'ball state on front end coming from server',
 
     // );
     // if (this.state.ball.body.blocked.right) {
