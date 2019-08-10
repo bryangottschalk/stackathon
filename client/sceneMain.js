@@ -27,12 +27,7 @@ class SceneMain extends Phaser.Scene {
     this.load.image('player1', 'images/player1.png');
     this.load.image('ball', 'images/face.png');
     this.load.audio('pop', ['sounds/pop.wav']);
-    this.input.keyboard.on('keydown_UP', () => this.setPlayerMoveState('up'));
-    this.input.keyboard.on('keyup_UP', () => this.setPlayerMoveState(null));
-    this.input.keyboard.on('keydown_DOWN', () =>
-      this.setPlayerMoveState('down')
-    );
-    this.input.keyboard.on('keyup_DOWN', () => this.setPlayerMoveState(null));
+
     socket.on('state', state => {
       this.state = state;
     });
@@ -42,7 +37,12 @@ class SceneMain extends Phaser.Scene {
     if (this.state.playerCount === 1) {
       this.isFirstPlayer = true;
     }
-
+    this.input.keyboard.on('keydown_UP', () => this.setPlayerMoveState('up'));
+    this.input.keyboard.on('keyup_UP', () => this.setPlayerMoveState(null));
+    this.input.keyboard.on('keydown_DOWN', () =>
+      this.setPlayerMoveState('down')
+    );
+    this.input.keyboard.on('keyup_DOWN', () => this.setPlayerMoveState(null));
     /* GRID */
     // const agrid = new AlignGrid({ scene: this, rows: 11, cols: 11 });
     // agrid.showNumbers();
@@ -88,6 +88,7 @@ class SceneMain extends Phaser.Scene {
     this.player2.scaleY = this.player2.scaleX;
     this.player2.setImmovable();
     this.player2.body.collideWorldBounds = true;
+    socket.emit('playerTwoConnected', this.player2.x, this.player2.y);
 
     /* BALL */
     if (this.state.playerCount === 1) {
@@ -96,12 +97,11 @@ class SceneMain extends Phaser.Scene {
       //receive ball (player2)
       this.getBall();
     }
-    // this.move
   }
 
   setPlayerMoveState(dir) {
     console.log('TCL: setPlayerMoveState -> dir', dir);
-    socket.emit('dir', dir);
+    socket.emit('dir', dir, this.isFirstPlayer);
   }
 
   getBall() {
@@ -125,7 +125,6 @@ class SceneMain extends Phaser.Scene {
     );
   }
   createBall(x, y) {
-    console.log('in createBall');
     ball = this.physics.add.sprite(
       game.config.width / 2,
       game.config.height / 2,
@@ -156,6 +155,11 @@ class SceneMain extends Phaser.Scene {
     } else if (this.state.playerOneState.direction === 'down') {
       this.player1.y += 10;
     }
+    if (this.state.playerTwoState.direction === 'up') {
+      this.player2.y -= 10;
+    } else if (this.state.playerTwoState.direction === 'down') {
+      this.player2.y += 10;
+    }
 
     if (this.isFirstPlayer) {
       socket.emit('ballMoved', ball.x, ball.y);
@@ -167,7 +171,6 @@ class SceneMain extends Phaser.Scene {
     if (this.isFirstPlayer && this.state.playerCount > 1) {
       if (ball.body.blocked.right) {
         socket.emit('p1scored');
-        // this.score1.setText(`score: ${this.state.score.player1}`);
       }
     } else {
       // is player 2
@@ -176,6 +179,5 @@ class SceneMain extends Phaser.Scene {
         socket.emit('p2scored');
       }
     }
-    // );
   }
 }

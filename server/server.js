@@ -6,9 +6,6 @@ const path = require('path');
 
 app.use(express.static(path.join(__dirname, '..', 'client')));
 
-/* set up for individual */
-const players = [];
-
 const state = {
   score: {
     player1: 0,
@@ -53,9 +50,13 @@ io.on('connection', socket => {
     // if we did socket.emit it would send the message to a particular client
   });
 
-  socket.on('dir', dir => {
-    console.log(dir);
-    state.playerOneState.direction = dir;
+  socket.on('dir', (dir, isFirstPlayer) => {
+    if (isFirstPlayer) {
+      state.playerOneState.direction = dir;
+    } else {
+      state.playerTwoState.direction = dir;
+    }
+    console.log('dir:', dir, 'isFirstPlayer?', isFirstPlayer);
   });
   socket.on('p1scored', () => {
     state.score.player1++;
