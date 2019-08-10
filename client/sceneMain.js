@@ -14,6 +14,9 @@ class SceneMain extends Phaser.Scene {
       playerTwoState: {
         direction: null,
       },
+      // playerIds: [],
+      playerCount: 0,
+      playerId: null,
       ball: {
         x: 0,
         y: 0,
@@ -25,8 +28,8 @@ class SceneMain extends Phaser.Scene {
     this.load.image('player1', 'images/player1.png');
     this.load.image('ball', 'images/face.png');
     this.load.audio('pop', ['sounds/pop.wav']);
-    console.log('socket in phaser', socket);
-    console.log('io in phaser', io);
+    // console.log('socket in phaser', socket);
+    // console.log('io in phaser', io);
 
     this.input.keyboard.on('keydown_UP', () => this.setPlayerMoveState('up'));
     this.input.keyboard.on('keyup_UP', () => this.setPlayerMoveState(null));
@@ -41,7 +44,9 @@ class SceneMain extends Phaser.Scene {
     });
   }
 
-  async create() {
+  create() {
+    console.log('STATE', this.state);
+
     /* GRID */
 
     // const agrid = new AlignGrid({ scene: this, rows: 11, cols: 11 });
@@ -92,43 +97,48 @@ class SceneMain extends Phaser.Scene {
     this.player2.body.collideWorldBounds = true;
 
     /* BALL */
-    await this.createBall(game.config.width / 2, game.config.height / 2);
-    // this.move
+    if (this.state.playerCount === 1) {
+      this.createBall(game.config.width / 2, game.config.height / 2);
+    }
 
-    console.log('BALL', ball);
+    // this.move
   }
 
   setPlayerMoveState(dir) {
+    console.log('TCL: setPlayerMoveState -> dir', dir);
     // this.state.playerOneState.direction = dir;
     socket.emit('dir', dir);
   }
 
   createBall(x, y) {
-    ball = this.physics.add.sprite(
+    console.log(this.state);
+    console.log('in createBall');
+    this.state.ball = this.physics.add.sprite(
       this.state.ball.x,
       this.state.ball.y,
       'ball'
     );
-    ball.body.collideWorldBounds = true;
-    console.log('TCL: createBall -> ball', ball);
+    // const ballTween = this.add.tween(ball);
+    // console.log('TCL: createBall -> ballTween', ballTween);
+    this.state.ball.body.collideWorldBounds = true;
 
-    this.physics.add.collider(this.player1, ball, () =>
-      this.game.sound.play('pop')
-    );
-    this.physics.add.collider(this.player2, ball, () =>
-      this.game.sound.play('pop')
-    );
+    // this.physics.add.collider(this.player1, ball, () =>
+    //   this.game.sound.play('pop')
+    // );
+    // this.physics.add.collider(this.player2, ball, () =>
+    //   this.game.sound.play('pop')
+    // );
 
-    ball.setVelocity(500, 100);
-    ball.setBounce(1, 0);
-    ball.body.setBounce(1, 1);
-    ball.setGravityX(200); // green line shows where the gravity's going
-    return ball;
+    this.state.ball.setVelocity(1000, 100);
+    this.state.ball.setBounce(1, 0);
+    this.state.ball.body.setBounce(1, 1);
+    this.state.ball.setGravityX(200); // green line shows where the gravity's going
+    return this.state.ball;
   }
 
   moveBall(x, y) {
     const tween = this.add.tween(ball);
-    console.log('TCL: moveBall -> tween', tween);
+    // console.log('TCL: moveBall -> tween', tween);
   }
 
   update() {
@@ -137,17 +147,19 @@ class SceneMain extends Phaser.Scene {
     } else if (this.state.playerOneState.direction === 'down') {
       this.player1.y += 10;
     }
+    // ball.x = this.state.ball.x;
+    // ball.y = this.state.ball.y;
     // console.log(this.state.ball.x);
-    console.log('y', this.state.ball.y);
+    // console.log('y', this.state.ball.y);
 
-    socket.emit('ballMoved', ball.x, ball.y);
+    socket.emit('ballMoved', this.state.ball.x, this.state.ball.y);
 
-    if (ball.body.blocked.right) {
-      socket.emit('scored');
-      this.score1.setText(`score: ${this.state.score.player1}`);
-    }
-    if (ball.body.blocked.left) {
-      this.score2.text = `score: ${(score.player2 += 1)}`;
-    }
+    // if (this.state.ball.body.blocked.right) {
+    //   socket.emit('scored');
+    //   this.score1.setText(`score: ${this.state.score.player1}`);
+    // }
+    // if (this.state.ball.body.blocked.left) {
+    //   this.score2.text = `score: ${(score.player2 += 1)}`;
+    // }
   }
 }

@@ -1,4 +1,5 @@
-let game, ball;
+let game;
+// ,ball;
 
 const score = {
   player1: 0,

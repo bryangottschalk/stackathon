@@ -6,6 +6,9 @@ const path = require('path');
 
 app.use(express.static(path.join(__dirname, '..', 'client')));
 
+/* set up for individual */
+const players = [];
+
 const state = {
   score: {
     player1: 0,
@@ -13,19 +16,49 @@ const state = {
   },
   playerOneState: {
     direction: null,
+    connected: false,
   },
   playerTwoState: {
     direction: null,
   },
+  playerIds: [],
+  playerCount: 0,
   ball: {
     x: 0,
     y: 0,
   },
 };
 
+// function Player(id, x, y) {
+//   this.id = id;
+//   this.x = x;
+//   this.y = y;
+// }
+
 io.on('connection', socket => {
-  // handle messages from any client
+  // socket.on('start', data => {
+  //   //make a new player --> client sends in its x and y position
+  //   console.log(`id: ${socket.id} x: ${data.x} y: ${data.y}`);
+
+  //   const player = new Player(socket.id, data.x, data.y);
+  //   players.push(player);
+  // });
   console.log('Someone connected', socket.id);
+
+  if (!state.playerIds.includes(socket.id)) {
+    state.playerIds.push(socket.id);
+    state.playerCount++;
+    console.log('new num players', state.playerCount);
+  }
+  socket.on('disconnect', () => {
+    console.log('a player disconnected');
+    const i = state.playerIds.indexOf(socket.id);
+    state.playerIds.splice(i, 1);
+    state.playerCount--;
+    console.log('new num players', state.playerCount);
+  });
+
+  // handle messages from any client
   socket.emit('message', 'Welcome from the server!'); // emits to one person
   // socket.emit('state', state);
   socket.on('message', text => {
@@ -44,7 +77,7 @@ io.on('connection', socket => {
     state.score.player1++;
   });
   socket.on('ballMoved', (ballX, ballY) => {
-    // console.log('TCL: ballY ', ballY);
+    console.log('TCL: ballY ', ballY);
     // console.log('in ballmoved', coordinates);
     state.ball.x = ballX;
     state.ball.y = ballY;
