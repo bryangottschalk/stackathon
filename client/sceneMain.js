@@ -27,6 +27,7 @@ class SceneMain extends Phaser.Scene {
     this.load.image('player1', 'images/player1.png');
     this.load.image('ball', 'images/face.png');
     this.load.audio('pop', ['sounds/pop.wav']);
+    this.load.audio('arcade-music', ['sounds/arcade-music.wav']);
 
     socket.on('state', state => {
       this.state = state;
@@ -34,6 +35,7 @@ class SceneMain extends Phaser.Scene {
   }
 
   create() {
+    this.game.sound.play('arcade-music');
     if (this.state.playerCount === 1) {
       this.isFirstPlayer = true;
     }
