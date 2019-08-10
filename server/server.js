@@ -38,6 +38,11 @@ io.on('connection', socket => {
     const i = state.playerIds.indexOf(socket.id);
     state.playerIds.splice(i, 1);
     state.playerCount--;
+    //reset score when lobby is empty
+    state.playerCount === 0 ? state.score = {
+      player1: 0,
+      player2: 0
+    }
     console.log('new num players:', state.playerCount);
   });
 
