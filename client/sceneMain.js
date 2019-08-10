@@ -52,7 +52,16 @@ class SceneMain extends Phaser.Scene {
       font: '30px',
     });
     this.text1.setOrigin(0.5, 0.5);
-
+    if (this.state.playerCount === 1) {
+      this.waitingForSecondPlayer = this.add.text(
+        300,
+        game.config.height - 100,
+        'practice mode: waiting for second player to join...',
+        {
+          font: '16px',
+        }
+      );
+    }
     /* SCORE */
 
     this.score1 = this.add.text(60, 50, `score: ${this.state.score.player1}`, {
