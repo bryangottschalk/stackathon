@@ -41,7 +41,7 @@ class SceneMain extends Phaser.Scene {
     });
   }
 
-  create() {
+  async create() {
     /* GRID */
 
     // const agrid = new AlignGrid({ scene: this, rows: 11, cols: 11 });
@@ -92,7 +92,10 @@ class SceneMain extends Phaser.Scene {
     this.player2.body.collideWorldBounds = true;
 
     /* BALL */
-    this.createBall(game.config.width / 2, game.config.height / 2);
+    await this.createBall(game.config.width / 2, game.config.height / 2);
+    // this.move
+
+    console.log('BALL', ball);
   }
 
   setPlayerMoveState(dir) {
@@ -123,6 +126,11 @@ class SceneMain extends Phaser.Scene {
     return ball;
   }
 
+  moveBall(x, y) {
+    const tween = this.add.tween(ball);
+    console.log('TCL: moveBall -> tween', tween);
+  }
+
   update() {
     if (this.state.playerOneState.direction === 'up') {
       this.player1.y -= 10;
@@ -130,7 +138,10 @@ class SceneMain extends Phaser.Scene {
       this.player1.y += 10;
     }
     // console.log(this.state.ball.x);
-    socket.emit('ballMoved', ball.x);
+    console.log('y', this.state.ball.y);
+
+    socket.emit('ballMoved', ball.x, ball.y);
+
     if (ball.body.blocked.right) {
       socket.emit('scored');
       this.score1.setText(`score: ${this.state.score.player1}`);

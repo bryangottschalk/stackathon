@@ -43,10 +43,11 @@ io.on('connection', socket => {
   socket.on('scored', () => {
     state.score.player1++;
   });
-  socket.on('ballMoved', ballX => {
-    console.log('TCL: ballX ', ballX);
+  socket.on('ballMoved', (ballX, ballY) => {
+    // console.log('TCL: ballY ', ballY);
     // console.log('in ballmoved', coordinates);
-    // state.ball.x = ballX;
+    state.ball.x = ballX;
+    state.ball.y = ballY;
     // state.ball.y = coordinates.y;
   });
 });
