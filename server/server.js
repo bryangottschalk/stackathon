@@ -77,7 +77,7 @@ server.on('error', err => {
   console.error('Server error:', err);
 });
 
-server.listen(8081, function() {
-  // Listens to port 8081
+server.listen(process.env.PORT || 3000, function() {
+  // Listens to port 3000
   console.log('Listening on ' + server.address().port);
 });
