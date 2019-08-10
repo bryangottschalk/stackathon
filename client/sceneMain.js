@@ -54,23 +54,30 @@ class SceneMain extends Phaser.Scene {
     this.text1.setOrigin(0.5, 0.5);
     if (this.state.playerCount === 1) {
       this.waitingForSecondPlayer = this.add.text(
-        300,
+        game.config.width / 2,
         game.config.height - 100,
-        'practice mode: waiting for second player to join...',
+        'practice mode: scoring will start when second player joins...',
         {
-          font: '16px',
+          font: '18px',
         }
       );
+      this.waitingForSecondPlayer.setOrigin(0.5, 0.5);
     }
+
     /* SCORE */
 
-    this.score1 = this.add.text(60, 50, `score: ${this.state.score.player1}`, {
-      font: '20px',
-    });
+    this.score1 = this.add.text(
+      60,
+      50,
+      `p1 score: ${this.state.score.player1}`,
+      {
+        font: '20px',
+      }
+    );
     this.score2 = this.add.text(
       game.config.width - 160,
       50,
-      `score: ${score.player2}`,
+      `p2 score: ${this.state.score.player2}`,
       {
         font: '20px',
       }
@@ -158,6 +165,10 @@ class SceneMain extends Phaser.Scene {
   update() {
     this.score1.setText(`score: ${this.state.score.player1}`);
     this.score2.setText(`score: ${this.state.score.player2}`);
+    if (this.isFirstPlayer && this.state.playerCount > 1) {
+      this.waitingForSecondPlayer.setText('');
+    }
+
     if (this.state.playerOneState.direction === 'up') {
       this.player1.y -= 10;
     } else if (this.state.playerOneState.direction === 'down') {

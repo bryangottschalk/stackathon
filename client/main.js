@@ -1,10 +1,5 @@
 let game, ball;
 
-const score = {
-  player1: 0,
-  player2: 0,
-};
-
 let playerOneState = {
   direction: null,
 };

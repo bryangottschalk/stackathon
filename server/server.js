@@ -49,7 +49,10 @@ io.on('connection', socket => {
   });
 
   // handle messages from any client
-  socket.emit('message', 'Welcome from the server!'); // emits to one person
+  socket.emit(
+    'message',
+    'Welcome from the server! Trash talk your opponent below.'
+  ); // emits to one person
   // socket.emit('state', state);
   socket.on('message', text => {
     //handle messages from single client
