@@ -11,16 +11,16 @@ const state = {
     player1: 0,
     player2: 0,
   },
-  scoreText: {
-    player1: null,
-  },
   playerOneState: {
     direction: null,
   },
   playerTwoState: {
     direction: null,
   },
-  ball: {},
+  ball: {
+    x: 0,
+    y: 0,
+  },
 };
 
 io.on('connection', socket => {
@@ -40,10 +40,14 @@ io.on('connection', socket => {
     // io.emit(state)
     // io.emit('p1direction', dir);
   });
-  socket.on('scored', addToScore => {
+  socket.on('scored', () => {
     state.score.player1++;
-    console.log('scored');
-    console.log('state.score.player1', state.score.player1);
+  });
+  socket.on('ballMoved', ballX => {
+    console.log('TCL: ballX ', ballX);
+    // console.log('in ballmoved', coordinates);
+    // state.ball.x = ballX;
+    // state.ball.y = coordinates.y;
   });
 });
 

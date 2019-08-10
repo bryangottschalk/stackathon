@@ -8,20 +8,19 @@ class SceneMain extends Phaser.Scene {
         player1: 0,
         player2: 0,
       },
-      scoreText: {
-        player1: null,
-      },
       playerOneState: {
         direction: null,
       },
       playerTwoState: {
         direction: null,
       },
-      ball: {},
+      ball: {
+        x: 0,
+        y: 0,
+      },
     };
   }
   preload() {
-    console.log('SceneMain', this);
     this.disableVisibilityChange = true;
     this.load.image('player1', 'images/player1.png');
     this.load.image('ball', 'images/face.png');
@@ -61,9 +60,6 @@ class SceneMain extends Phaser.Scene {
     this.score1 = this.add.text(60, 50, `score: ${this.state.score.player1}`, {
       font: '20px',
     });
-    // console.log('TCL: SceneMain -> create -> this.score1', this.score1);
-    // console.log('TCL: SceneMain -> create -> score1 ', score1);
-
     this.score2 = this.add.text(
       game.config.width - 160,
       50,
@@ -106,11 +102,12 @@ class SceneMain extends Phaser.Scene {
 
   createBall(x, y) {
     ball = this.physics.add.sprite(
-      game.config.width / 2,
-      game.config.height / 2,
+      this.state.ball.x,
+      this.state.ball.y,
       'ball'
     );
     ball.body.collideWorldBounds = true;
+    console.log('TCL: createBall -> ball', ball);
 
     this.physics.add.collider(this.player1, ball, () =>
       this.game.sound.play('pop')
@@ -119,7 +116,7 @@ class SceneMain extends Phaser.Scene {
       this.game.sound.play('pop')
     );
 
-    ball.setVelocity(3000, 100);
+    ball.setVelocity(500, 100);
     ball.setBounce(1, 0);
     ball.body.setBounce(1, 1);
     ball.setGravityX(200); // green line shows where the gravity's going
@@ -132,21 +129,11 @@ class SceneMain extends Phaser.Scene {
     } else if (this.state.playerOneState.direction === 'down') {
       this.player1.y += 10;
     }
-
+    // console.log(this.state.ball.x);
+    socket.emit('ballMoved', ball.x);
     if (ball.body.blocked.right) {
-      // this.state.score.player1 += 1;
-      console.log(this.state.score.player1);
-      // this.score1 = this.add.text(
-      //   60,
-      //   50,
-      //   `score: ${this.state.score.player1}`,
-      //   {
-      //     font: '20px',
-      //   }
-      // );
       socket.emit('scored');
       this.score1.setText(`score: ${this.state.score.player1}`);
-      // console.log('this', this);
     }
     if (ball.body.blocked.left) {
       this.score2.text = `score: ${(score.player2 += 1)}`;
