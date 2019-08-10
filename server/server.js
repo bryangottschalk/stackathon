@@ -77,10 +77,13 @@ io.on('connection', socket => {
     state.score.player1++;
   });
   socket.on('ballMoved', (ballX, ballY) => {
-    console.log('TCL: ballY ', ballY);
-    // console.log('in ballmoved', coordinates);
     state.ball.x = ballX;
     state.ball.y = ballY;
+    console.log('x:', state.ball.x);
+    console.log('y:', state.ball.y);
+    // console.log('x:', ballX, 'y:', ballY);
+    // console.log('in ballmoved', coordinates);
+
     // state.ball.y = coordinates.y;
   });
 });
@@ -91,7 +94,7 @@ io.on('connection', socket => {
 
 setInterval(() => {
   io.emit('state', state);
-}, 100);
+}, 10);
 
 server.on('error', err => {
   console.error('Server error:', err);

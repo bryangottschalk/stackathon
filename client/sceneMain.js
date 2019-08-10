@@ -45,7 +45,9 @@ class SceneMain extends Phaser.Scene {
   }
 
   create() {
-    console.log('STATE', this.state);
+    if (this.state.playerCount === 1) {
+      this.isFirstPlayer = true;
+    }
 
     /* GRID */
 
@@ -99,8 +101,10 @@ class SceneMain extends Phaser.Scene {
     /* BALL */
     if (this.state.playerCount === 1) {
       this.createBall(game.config.width / 2, game.config.height / 2);
+    } else {
+      //receive ball
+      this.getBall();
     }
-
     // this.move
   }
 
@@ -109,37 +113,54 @@ class SceneMain extends Phaser.Scene {
     // this.state.playerOneState.direction = dir;
     socket.emit('dir', dir);
   }
-
-  createBall(x, y) {
-    console.log(this.state);
-    console.log('in createBall');
-    this.state.ball = this.physics.add.sprite(
+  getBall() {
+    //receives ball state from server
+    ball = this.physics.add.sprite(
       this.state.ball.x,
       this.state.ball.y,
       'ball'
     );
+    ball.body.collideWorldBounds = true;
+    ball.setVelocity(1000, 100);
+    ball.setBounce(1, 0);
+    ball.body.setBounce(1, 1);
+    ball.setGravityX(200);
+    this.physics.add.collider(this.player1, ball, () =>
+      this.game.sound.play('pop')
+    );
+    this.physics.add.collider(this.player2, ball, () =>
+      this.game.sound.play('pop')
+    );
+  }
+  createBall(x, y) {
+    console.log('in createBall');
+    ball = this.physics.add.sprite(
+      game.config.width / 2,
+      game.config.height / 2,
+      'ball'
+    );
+
     // const ballTween = this.add.tween(ball);
     // console.log('TCL: createBall -> ballTween', ballTween);
-    this.state.ball.body.collideWorldBounds = true;
+    ball.body.collideWorldBounds = true;
 
-    // this.physics.add.collider(this.player1, ball, () =>
-    //   this.game.sound.play('pop')
-    // );
-    // this.physics.add.collider(this.player2, ball, () =>
-    //   this.game.sound.play('pop')
-    // );
+    this.physics.add.collider(this.player1, ball, () =>
+      this.game.sound.play('pop')
+    );
+    this.physics.add.collider(this.player2, ball, () =>
+      this.game.sound.play('pop')
+    );
 
-    this.state.ball.setVelocity(1000, 100);
-    this.state.ball.setBounce(1, 0);
-    this.state.ball.body.setBounce(1, 1);
-    this.state.ball.setGravityX(200); // green line shows where the gravity's going
-    return this.state.ball;
+    ball.setVelocity(1000, 100);
+    ball.setBounce(1, 0);
+    ball.body.setBounce(1, 1);
+    ball.setGravityX(200); // green line shows where the gravity's going
+    // return this.state.ball;
   }
-
-  moveBall(x, y) {
-    const tween = this.add.tween(ball);
-    // console.log('TCL: moveBall -> tween', tween);
-  }
+  // moveBall(x, y) {
+  //   const tween = this.add.tween(ball);
+  //   // console.log('TCL: moveBall -> tween', tween);
+  // }
 
   update() {
     if (this.state.playerOneState.direction === 'up') {
@@ -149,11 +170,16 @@ class SceneMain extends Phaser.Scene {
     }
     // ball.x = this.state.ball.x;
     // ball.y = this.state.ball.y;
-    // console.log(this.state.ball.x);
-    // console.log('y', this.state.ball.y);
+    if (this.isFirstPlayer) {
+      socket.emit('ballMoved', ball.x, ball.y);
+    } else {
+      ball.x = this.state.ball.x;
+      ball.y = this.state.ball.y;
+    }
+    // console.log(
+    //   'ball state on front end coming from server',
 
-    socket.emit('ballMoved', this.state.ball.x, this.state.ball.y);
-
+    // );
     // if (this.state.ball.body.blocked.right) {
     //   socket.emit('scored');
     //   this.score1.setText(`score: ${this.state.score.player1}`);
