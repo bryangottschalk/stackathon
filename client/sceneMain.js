@@ -42,6 +42,7 @@ class SceneMain extends Phaser.Scene {
       frameWidth: 1000,
       frameHeight: 1000,
     });
+    this.load.image('forest', 'images/forest-background.png');
     this.load.image('player1', 'images/player1.png');
     this.load.image('ball', 'images/face.png');
     this.load.audio('pop', ['sounds/pop.wav']);
@@ -54,6 +55,13 @@ class SceneMain extends Phaser.Scene {
 
   // eslint-disable-next-line max-statements
   create() {
+    this.background = this.add.image(
+      game.config.width / 2,
+      game.config.height / 2,
+      'forest'
+    );
+    this.background.displayWidth = 1300;
+    this.background.scaleY = this.background.scaleX;
     const music = this.sound.add('arcade-music');
     const musicConfig = {
       mute: false,
@@ -133,7 +141,6 @@ class SceneMain extends Phaser.Scene {
       );
     } else {
       //get x and y from server
-      console.log('this is player 2');
       this.player1 = this.physics.add.sprite(
         100,
         this.state.playerOneState.y,
@@ -178,7 +185,14 @@ class SceneMain extends Phaser.Scene {
       this.state.ball.y,
       'monster'
     );
-    ball.displayWidth = 10;
+    this.anims.create({
+      key: 'dance',
+      frames: [{ key: 'monster1', frame: 0 }, { key: 'monster2', frame: 0 }],
+      frameRate: 8,
+      repeat: -1,
+    });
+    ball.play('dance');
+    ball.displayWidth = 150;
     ball.scaleY = ball.scaleX;
     ball.body.collideWorldBounds = true;
     ball.setVelocity(1000, 100);
@@ -206,7 +220,7 @@ class SceneMain extends Phaser.Scene {
     this.anims.create({
       key: 'dance',
       frames: [{ key: 'monster1', frame: 0 }, { key: 'monster2', frame: 0 }],
-      frameRate: 8,
+      frameRate: 4,
       repeat: -1,
     });
     ball.play('dance');
