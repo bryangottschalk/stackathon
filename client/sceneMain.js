@@ -22,6 +22,14 @@ class SceneMain extends Phaser.Scene {
         x: 0,
         y: 0,
       },
+      bumper1: {
+        x: game.config.width / 2,
+        y: 0,
+      },
+      bumper2: {
+        x: game.config.width / 2,
+        y: 0,
+      },
     };
   }
   preload() {
@@ -66,7 +74,7 @@ class SceneMain extends Phaser.Scene {
   }
 
   // eslint-disable-next-line max-statements
-  create() {
+  async create() {
     this.background = this.add.image(
       game.config.width / 2,
       game.config.height / 2,
@@ -96,26 +104,27 @@ class SceneMain extends Phaser.Scene {
     this.input.keyboard.on('keyup_DOWN', () => this.setPlayerMoveState(null));
 
     /* BOUNCERS */
-    this.speed = 100;
-    this.bouncer1 = this.physics.add.sprite(
-      game.config.width / 2,
-      (game.config.height * 2) / 3,
-      'fighter'
-    );
-    this.bouncer2 = this.physics.add.sprite(
-      game.config.width / 2,
-      game.config.height / 3,
-      'fighter'
-    );
-    this.bouncer1.displayWidth = 75;
-    this.bouncer1.scaleY = this.bouncer1.scaleX;
-    this.bouncer2.displayWidth = 75;
-    this.bouncer2.scaleY = this.bouncer2.scaleX;
 
-    this.bouncer1.setVelocityY(this.speed);
-    this.bouncer2.setVelocityY(-this.speed);
-    this.bouncer1.setImmovable();
-    this.bouncer2.setImmovable();
+    // this.speed = 100;
+    // this.bouncer1 = this.physics.add.sprite(
+    //   game.config.width / 2,
+    //   (game.config.height * 2) / 3,
+    //   'fighter'
+    // );
+    // this.bouncer2 = this.physics.add.sprite(
+    //   game.config.width / 2,
+    //   game.config.height / 3,
+    //   'fighter'
+    // );
+    // this.bouncer1.displayWidth = 75;
+    // this.bouncer1.scaleY = this.bouncer1.scaleX;
+    // this.bouncer2.displayWidth = 75;
+    // this.bouncer2.scaleY = this.bouncer2.scaleX;
+
+    // this.bouncer1.setVelocityY(this.speed);
+    // this.bouncer2.setVelocityY(-this.speed);
+    // this.bouncer1.setImmovable();
+    // this.bouncer2.setImmovable();
     ////////////////////////////////////////////////////////////////////////////
 
     /* GRID */
@@ -191,12 +200,14 @@ class SceneMain extends Phaser.Scene {
     this.player2.body.collideWorldBounds = true;
     socket.emit('playerTwoConnected', this.player2.x, this.player2.y);
 
-    /* BALL */
+    /* CREATE BALL AND BUMPERS */
     if (this.state.playerCount === 1) {
       this.createBall(game.config.width / 2, game.config.height / 2);
+      this.createBumpers();
     } else {
       //receive ball (player2)
-      this.getBall();
+      await this.getBall();
+      await this.getBumpers();
     }
 
     /////////////////////////////////////////////////////////////////
@@ -230,17 +241,65 @@ class SceneMain extends Phaser.Scene {
   setPlayerMoveState(dir) {
     socket.emit('dir', dir, this.isFirstPlayer);
   }
-  bumperPhysics() {
-    this.physics.add.collider(this.bouncer1, ball, () =>
-      console.log('hit bouncer 1')
+  createBumpers() {
+    this.speed = 100;
+    this.bumper1 = this.physics.add.sprite(
+      game.config.width / 2,
+      (game.config.height * 2) / 3,
+      'fighter'
     );
-    this.physics.add.collider(this.bouncer2, ball, () =>
-      console.log('hit bouncer 2')
+    this.bumper2 = this.physics.add.sprite(
+      game.config.width / 2,
+      game.config.height / 3,
+      'fighter'
+    );
+    this.bumper1.displayWidth = 75;
+    this.bumper1.scaleY = this.bumper1.scaleX;
+    this.bumper2.displayWidth = 75;
+    this.bumper2.scaleY = this.bumper2.scaleX;
+
+    this.bumper1.setVelocityY(this.speed);
+    this.bumper2.setVelocityY(-this.speed);
+    this.bumper1.setImmovable();
+    this.bumper2.setImmovable();
+    this.physics.add.collider(this.bumper1, ball, () =>
+      console.log('hit bumper 1')
+    );
+    this.physics.add.collider(this.bumper2, ball, () =>
+      console.log('hit bumper 2')
     );
   }
+  getBumpers() {
+    this.bumper1 = this.physics.add.sprite(
+      this.state.bumper1.x,
+      this.state.bumper1.y,
+      'fighter'
+    );
+    this.bumper2 = this.physics.add.sprite(
+      this.state.bumper2.x,
+      this.state.bumper2.y,
+      'fighter'
+    );
+    this.bumper1.displayWidth = 75;
+    this.bumper1.scaleY = this.bumper1.scaleX;
+    this.bumper2.displayWidth = 75;
+    this.bumper2.scaleY = this.bumper2.scaleX;
+
+    this.bumper1.setVelocityY(this.speed);
+    this.bumper2.setVelocityY(-this.speed);
+    this.bumper1.setImmovable();
+    this.bumper2.setImmovable();
+    this.physics.add.collider(this.bumper1, ball, () =>
+      console.log('hit bumper 1')
+    );
+    this.physics.add.collider(this.bumper2, ball, () =>
+      console.log('hit bumper 2')
+    );
+  }
+
   getBall() {
     //player 2
-    //receives ball state from server and creates a new ball with those
+    //receives ball state from server and creates a new ball with those x and y coordinates
     ball = this.physics.add.sprite(
       this.state.ball.x,
       this.state.ball.y,
@@ -288,7 +347,6 @@ class SceneMain extends Phaser.Scene {
     ball.setVelocity(1000, 1000);
     ball.setBounce(1, 1);
     ball.body.setBounce(1, 1);
-    this.bumperPhysics();
     this.physics.add.collider(this.player1, ball, () =>
       this.game.sound.play('pop')
     );
@@ -320,9 +378,11 @@ class SceneMain extends Phaser.Scene {
     if (this.isFirstPlayer) {
       socket.emit('ballMoved', ball.x, ball.y);
       socket.emit('p1moved', this.player1.x, this.player1.y);
+      socket.emit('bumpersMoved', this.bumper1.y, this.bumper2.y);
     } else {
       ball.x = this.state.ball.x;
       ball.y = this.state.ball.y;
+      this.bumper1.y = this.state.ball.y;
     }
 
     if (this.isFirstPlayer && this.state.playerCount > 1) {
@@ -337,17 +397,17 @@ class SceneMain extends Phaser.Scene {
       }
     }
 
-    if (this.bouncer1.y > this.game.config.height) {
-      this.bouncer1.setVelocityY(-this.speed);
+    if (this.bumper1.y > this.game.config.height) {
+      this.bumper1.setVelocityY(-this.speed);
     }
-    if (this.bouncer1.y < 0) {
-      this.bouncer1.setVelocityY(this.speed);
+    if (this.bumper1.y < 0) {
+      this.bumper1.setVelocityY(this.speed);
     }
-    if (this.bouncer2.y > this.game.config.height) {
-      this.bouncer2.setVelocityY(-this.speed);
+    if (this.bumper2.y > this.game.config.height) {
+      this.bumper2.setVelocityY(-this.speed);
     }
-    if (this.bouncer2.y < 0) {
-      this.bouncer2.setVelocityY(this.speed);
+    if (this.bumper2.y < 0) {
+      this.bumper2.setVelocityY(this.speed);
     }
   }
 }

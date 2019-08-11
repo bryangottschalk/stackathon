@@ -25,6 +25,12 @@ const state = {
     x: 0,
     y: 0,
   },
+  bumper1: {
+    y: 0,
+  },
+  bumper2: {
+    y: 0,
+  },
 };
 
 io.on('connection', socket => {
@@ -81,6 +87,11 @@ io.on('connection', socket => {
     state.ball.x = ballX;
     state.ball.y = ballY;
   });
+  socket.on('bumpersMoved', (bumper1y, bumper2y) => {
+    state.bumper1.y = bumper1y;
+    state.bumper2.y = bumper2y;
+  });
+
   socket.on('p1moved', (p1x, p1y) => {
     state.playerOneState.x = p1x;
     state.playerOneState.y = p1y;
