@@ -14,3 +14,12 @@ ul {
 h1 {
   color: green;
 }
+
+.wrapper {
+  display: flex;
+  /* justify-content: space-evenly; */
+}
+
+#phaser-game {
+  padding-right: 30px;
+}
