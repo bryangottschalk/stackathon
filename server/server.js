@@ -59,7 +59,7 @@ io.on('connection', socket => {
   // handle messages from any client
   socket.emit(
     'message',
-    `Welcome! Forestpong fully supports trash talk so have at it.`
+    `Welcome! Crystal Baller fully supports trash talk so have at it.`
   ); // emits to one person
   socket.on('message', text => {
     //handle messages from single client
@@ -82,6 +82,15 @@ io.on('connection', socket => {
   });
   socket.on('p2scored', () => {
     state.score.player2++;
+  });
+
+  socket.on('gameOver', winningPlayerMessage => {
+    console.log(winningPlayerMessage);
+    io.emit('gameOverMessage', winningPlayerMessage);
+    state.score = {
+      player1: 0,
+      player2: 0,
+    };
   });
   socket.on('ballMoved', (ballX, ballY) => {
     state.ball.x = ballX;

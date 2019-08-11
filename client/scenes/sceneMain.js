@@ -65,6 +65,13 @@ class SceneMain extends Phaser.Scene {
 
   // eslint-disable-next-line max-statements
   async create() {
+    socket.on('gameOverMessage', text => {
+      const parent = document.getElementById('events');
+      const el = document.createElement('li');
+      el.innerHTML = text;
+      parent.appendChild(el);
+    });
+
     this.background = this.add.image(
       game.config.width / 2,
       game.config.height / 2,
@@ -98,7 +105,7 @@ class SceneMain extends Phaser.Scene {
     // agrid.showNumbers();
 
     /* TEXT HEADING */
-    this.text1 = this.add.text(game.config.width / 2, 50, 'forestpong', {
+    this.text1 = this.add.text(game.config.width / 2, 50, 'Crystal Baller', {
       font: '30px',
     });
     this.text1.setOrigin(0.5, 0.5);
@@ -149,8 +156,6 @@ class SceneMain extends Phaser.Scene {
     }
     this.player1.displayWidth = 175;
     this.player1.displayHeight = 175;
-    // this.player1.displayWidth = 160;
-    // this.player1.scaleY = this.player1.scaleX;
     this.player1.setImmovable();
     this.player1.body.collideWorldBounds = true;
 
@@ -316,16 +321,12 @@ class SceneMain extends Phaser.Scene {
   // eslint-disable-next-line complexity
   // eslint-disable-next-line max-statements
   update() {
-    if (ball.body.blocked.left) {
-      console.log('hey');
-    }
     console.log();
     this.score1.setText(`p1 score: ${this.state.score.player1}`);
     this.score2.setText(`p2 score: ${this.state.score.player2}`);
     if (this.isFirstPlayer && this.state.playerCount > 1) {
       this.waitingForSecondPlayer.setText('');
     }
-
     if (this.state.playerOneState.direction === 'up') {
       this.player1.y -= 20;
     } else if (this.state.playerOneState.direction === 'down') {
@@ -336,7 +337,6 @@ class SceneMain extends Phaser.Scene {
     } else if (this.state.playerTwoState.direction === 'down') {
       this.player2.y += 20;
     }
-
     if (this.isFirstPlayer) {
       socket.emit('ballMoved', ball.x, ball.y);
       socket.emit('p1moved', this.player1.x, this.player1.y);
@@ -347,14 +347,13 @@ class SceneMain extends Phaser.Scene {
       this.bumper1.y = this.state.bumper1.y;
       this.bumper2.y = this.state.bumper2.y;
     }
-
-    if (this.isFirstPlayer && this.state.playerCount > 1) {
-      if (ball.body.blocked.right) {
-        socket.emit('p1scored');
-      }
+    if (ball.body.blocked.right && this.state.playerCount > 1) {
+      socket.emit('p1scored');
+      this.checkWin();
     }
     if (ball.body.blocked.left && this.state.playerCount > 1) {
       socket.emit('p2scored');
+      this.checkWin();
     }
     if (this.isFirstPlayer && this.bumper1.y > this.game.config.height) {
       this.bumper1.setVelocityY(-this.speed);
@@ -367,6 +366,16 @@ class SceneMain extends Phaser.Scene {
     }
     if (this.isFirstPlayer && this.bumper2.y < 0) {
       this.bumper2.setVelocityY(this.speed);
+    }
+  }
+  checkWin() {
+    if (this.state.score.player1 >= 9) {
+      this.scene.start('GameOver', 'player 1 wins');
+      socket.emit('gameOver', 'player 1 wins');
+    }
+    if (this.state.score.player2 >= 9) {
+      this.scene.start('GameOver');
+      socket.emit('gameOver');
     }
   }
 }

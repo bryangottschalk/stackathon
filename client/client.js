@@ -9,7 +9,17 @@ socket.on('message', text => {
   el.innerHTML = text;
   parent.appendChild(el);
 });
-
+// socket.on('gameOverMessage', text => {
+//   // player X wins
+//   console.log('it worked', text);
+// this.gameOverMessage = this.add.text(game.config.width / 2, 50, text, {
+//   font: '30px',
+// });
+//   const parent = document.getElementById('events');
+//   const el = document.createElement('li');
+//   el.innerHTML = text;
+//   parent.appendChild(el);
+// });
 const chatSubmitted = e => {
   e.preventDefault(); // don't need to submit and reload the page --> we will handle the data ourselves
   const input = document.querySelector('#chat');
