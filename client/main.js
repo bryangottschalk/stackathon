@@ -1,4 +1,4 @@
-let game, ball;
+let game, ball, bumper1, bumper2;
 
 let playerOneState = {
   direction: null,
@@ -16,7 +16,7 @@ window.onload = function() {
     physics: {
       default: 'arcade',
       arcade: {
-        debug: true,
+        debug: false,
       },
     },
   };

@@ -26,10 +26,18 @@ class SceneMain extends Phaser.Scene {
   }
   preload() {
     this.disableVisibilityChange = true;
-    this.load.spritesheet('fighter', '/images/fighter.png', {
+    this.load.spritesheet('archer', '/images/archer.png', {
       frameWidth: 1000,
       frameHeight: 1000,
     });
+    this.load.spritesheet(
+      'archerAttack',
+      '/images/archer-attack-spritesheet.png',
+      {
+        frameWidth: 1051,
+        frameHeight: 1000,
+      }
+    );
     this.load.spritesheet('wizard', '/images/wizard.png', {
       frameWidth: 1000,
       frameHeight: 1000,
@@ -60,7 +68,7 @@ class SceneMain extends Phaser.Scene {
       game.config.height / 2,
       'forest'
     );
-    this.background.displayWidth = 1300;
+    this.background.displayWidth = 1400;
     this.background.scaleY = this.background.scaleX;
     const music = this.sound.add('arcade-music');
     const musicConfig = {
@@ -82,6 +90,29 @@ class SceneMain extends Phaser.Scene {
       this.setPlayerMoveState('down')
     );
     this.input.keyboard.on('keyup_DOWN', () => this.setPlayerMoveState(null));
+
+    /* BOUNCERS */
+    this.speed = 100;
+    this.bouncer1 = this.physics.add.sprite(
+      game.config.width / 2,
+      (game.config.height * 2) / 3,
+      'ball'
+    );
+    this.bouncer2 = this.physics.add.sprite(
+      game.config.width / 2,
+      game.config.height / 3,
+      'ball'
+    );
+    this.bouncer1.displayWidth = 50;
+    this.bouncer1.displayHeight = 50;
+    this.bouncer2.displayWidth = 50;
+    this.bouncer2.displayHeight = 50;
+    this.bouncer1.setVelocityY(this.speed);
+    this.bouncer2.setVelocityY(-this.speed);
+    this.bouncer1.setImmovable();
+    this.bouncer2.setImmovable();
+    ////////////////////////////////////////////////////////////////////////////
+
     /* GRID */
     // const agrid = new AlignGrid({ scene: this, rows: 11, cols: 11 });
     // agrid.showNumbers();
@@ -137,19 +168,20 @@ class SceneMain extends Phaser.Scene {
       this.player1 = this.physics.add.sprite(
         100,
         game.config.height / 2,
-        'fighter'
+        'archer'
       );
     } else {
       //get x and y from server
       this.player1 = this.physics.add.sprite(
         100,
         this.state.playerOneState.y,
-        'fighter'
+        'archer'
       );
     }
-    console.log(this.player1);
-    this.player1.displayWidth = 150;
-    this.player1.scaleY = this.player1.scaleX;
+    this.player1.displayWidth = 175;
+    this.player1.displayHeight = 175;
+    // this.player1.displayWidth = 160;
+    // this.player1.scaleY = this.player1.scaleX;
     this.player1.setImmovable();
     this.player1.body.collideWorldBounds = true;
 
@@ -171,19 +203,53 @@ class SceneMain extends Phaser.Scene {
       //receive ball (player2)
       this.getBall();
     }
+
+    /////////////////////////////////////////////////////////////////
+    /* SET UP ATTACKS --> move to archer attack function later */
+    console.log(this.player1, 'player1');
+    this.archerAttack = this.add.sprite(
+      this.player1.x,
+      this.player1.y + 200,
+      'archerAttack'
+    );
+    this.archerAttack.displayWidth = 175;
+    this.archerAttack.displayHeight = 175;
+    this.archerAttack.scaleY = this.archerAttack.scaleX;
+    this.anims.generateFrameNumbers('archerAttack');
+    this.anims.create({
+      key: 'archerAttack',
+      frames: [
+        { key: 'archerAttack', frame: 0 },
+        { key: 'archerAttack', frame: 1 },
+        { key: 'archerAttack', frame: 2 },
+        { key: 'archerAttack', frame: 3 },
+        { key: 'archerAttack', frame: 4 },
+      ],
+      frameRate: 5,
+      repeat: -1,
+    });
+    this.archerAttack.play('archerAttack');
+    /////////////////////////////////////////////////////////////////
   }
 
   setPlayerMoveState(dir) {
     socket.emit('dir', dir, this.isFirstPlayer);
   }
-
+  bumperPhysics() {
+    this.physics.add.collider(this.bouncer1, ball, () =>
+      console.log('hit bouncer 1')
+    );
+    this.physics.add.collider(this.bouncer2, ball, () =>
+      console.log('hit bouncer 2')
+    );
+  }
   getBall() {
     //player 2
     //receives ball state from server and creates a new ball with those
     ball = this.physics.add.sprite(
       this.state.ball.x,
       this.state.ball.y,
-      'monster'
+      'ball'
     );
     this.anims.create({
       key: 'dance',
@@ -192,13 +258,12 @@ class SceneMain extends Phaser.Scene {
       repeat: -1,
     });
     ball.play('dance');
-    ball.displayWidth = 150;
+    ball.displayWidth = 115;
     ball.scaleY = ball.scaleX;
     ball.body.collideWorldBounds = true;
-    ball.setVelocity(1000, 100);
-    ball.setBounce(1, 0);
-    ball.body.setBounce(1, 1);
-    ball.setGravityX(500);
+    ball.setVelocity(1000, 1000);
+    ball.setBounce(0.9, 0.9);
+    ball.body.setBounce(1, 0.75);
     this.physics.add.collider(this.player1, ball, () =>
       this.game.sound.play('pop')
     );
@@ -210,9 +275,9 @@ class SceneMain extends Phaser.Scene {
     ball = this.physics.add.sprite(
       game.config.width / 2,
       game.config.height / 2,
-      'monster'
+      'ball'
     );
-    ball.displayWidth = 20;
+    ball.displayWidth = 100;
     ball.scaleY = ball.scaleX;
 
     ball.body.collideWorldBounds = true;
@@ -225,18 +290,18 @@ class SceneMain extends Phaser.Scene {
     });
     ball.play('dance');
 
+    ball.setVelocity(1000, 1000);
+    ball.setBounce(0.9, 0.9);
+    ball.body.setBounce(1, 0.75);
+    this.bumperPhysics();
     this.physics.add.collider(this.player1, ball, () =>
       this.game.sound.play('pop')
     );
     this.physics.add.collider(this.player2, ball, () =>
       this.game.sound.play('pop')
     );
-
-    ball.setVelocity(1000, 100);
-    ball.setBounce(1, 0);
-    ball.body.setBounce(1, 1);
-    ball.setGravityX(500); // green line on dev mode shows where the gravity's going
   }
+  archerAttack() {}
 
   // eslint-disable-next-line complexity
   update() {
@@ -275,6 +340,19 @@ class SceneMain extends Phaser.Scene {
       if (ball.body.blocked.left && this.state.playerCount > 1) {
         socket.emit('p2scored');
       }
+    }
+
+    if (this.bouncer1.y > this.game.config.height) {
+      this.bouncer1.setVelocityY(-this.speed);
+    }
+    if (this.bouncer1.y < 0) {
+      this.bouncer1.setVelocityY(this.speed);
+    }
+    if (this.bouncer2.y > this.game.config.height) {
+      this.bouncer2.setVelocityY(-this.speed);
+    }
+    if (this.bouncer2.y < 0) {
+      this.bouncer2.setVelocityY(this.speed);
     }
   }
 }
