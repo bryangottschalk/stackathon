@@ -286,7 +286,7 @@ class SceneMain extends Phaser.Scene {
     ball.displayWidth = 115;
     ball.scaleY = ball.scaleX;
     ball.body.collideWorldBounds = true;
-    ball.setVelocity(700, 700);
+    ball.setVelocity(600, 600);
     ball.setBounce(1, 1);
     ball.body.setBounce(1, 1);
     this.physics.add.collider(this.player1, ball, () =>
@@ -315,7 +315,7 @@ class SceneMain extends Phaser.Scene {
     });
     ball.play('dance');
 
-    ball.setVelocity(700, 700);
+    ball.setVelocity(600, 600);
     ball.setBounce(1, 1);
     ball.body.setBounce(1, 1);
     this.physics.add.collider(this.player1, ball, () =>
