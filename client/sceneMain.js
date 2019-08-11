@@ -123,7 +123,7 @@ class SceneMain extends Phaser.Scene {
     // agrid.showNumbers();
 
     /* TEXT HEADING */
-    this.text1 = this.add.text(game.config.width / 2, 50, 'emojipong', {
+    this.text1 = this.add.text(game.config.width / 2, 50, 'forestpong', {
       font: '30px',
     });
     this.text1.setOrigin(0.5, 0.5);
@@ -258,7 +258,7 @@ class SceneMain extends Phaser.Scene {
     ball.body.collideWorldBounds = true;
     ball.setVelocity(1000, 1000);
     ball.setBounce(1, 1);
-    ball.body.setBounce(1, 0.75);
+    ball.body.setBounce(1, 1);
     this.physics.add.collider(this.player1, ball, () =>
       this.game.sound.play('pop')
     );
@@ -287,7 +287,7 @@ class SceneMain extends Phaser.Scene {
 
     ball.setVelocity(1000, 1000);
     ball.setBounce(1, 1);
-    ball.body.setBounce(1, 0.75);
+    ball.body.setBounce(1, 1);
     this.bumperPhysics();
     this.physics.add.collider(this.player1, ball, () =>
       this.game.sound.play('pop')
