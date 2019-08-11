@@ -79,7 +79,7 @@ class SceneMain extends Phaser.Scene {
     /* SCORE */
 
     this.score1 = this.add.text(
-      60,
+      50,
       50,
       `p1 score: ${this.state.score.player1}`,
       {
@@ -87,7 +87,7 @@ class SceneMain extends Phaser.Scene {
       }
     );
     this.score2 = this.add.text(
-      game.config.width - 160,
+      game.config.width - 190,
       50,
       `p2 score: ${this.state.score.player2}`,
       {
@@ -140,7 +140,7 @@ class SceneMain extends Phaser.Scene {
       'ball'
     );
     ball.body.collideWorldBounds = true;
-    ball.setVelocity(1500, 100);
+    ball.setVelocity(1000, 100);
     ball.setBounce(1, 0);
     ball.body.setBounce(1, 1);
     ball.setGravityX(500);
@@ -167,7 +167,7 @@ class SceneMain extends Phaser.Scene {
       this.game.sound.play('pop')
     );
 
-    ball.setVelocity(1500, 100);
+    ball.setVelocity(1000, 100);
     ball.setBounce(1, 0);
     ball.body.setBounce(1, 1);
     ball.setGravityX(500); // green line on dev mode shows where the gravity's going
@@ -175,8 +175,8 @@ class SceneMain extends Phaser.Scene {
 
   // eslint-disable-next-line complexity
   update() {
-    this.score1.setText(`score: ${this.state.score.player1}`);
-    this.score2.setText(`score: ${this.state.score.player2}`);
+    this.score1.setText(`p1 score: ${this.state.score.player1}`);
+    this.score2.setText(`p2 score: ${this.state.score.player2}`);
     if (this.isFirstPlayer && this.state.playerCount > 1) {
       this.waitingForSecondPlayer.setText('');
     }

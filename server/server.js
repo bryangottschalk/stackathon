@@ -51,12 +51,14 @@ io.on('connection', socket => {
   // handle messages from any client
   socket.emit(
     'message',
-    `Welcome from the server! Kindly trash talk your opponent below if you'd like.`
+    `Welcome from the server! Emojipong fully supports trash talk so have at it.`
   ); // emits to one person
-  // socket.emit('state', state);
   socket.on('message', text => {
     //handle messages from single client
-    io.emit('message', text); // send chat message to everyone that is connected, included client itself
+    io.emit(
+      'message',
+      `player ${state.playerIds.indexOf(socket.id) + 1}: ${text}`
+    ); // send chat message to everyone that is connected, included client itself
     // if we did socket.emit it would send the message to a particular client
   });
 
