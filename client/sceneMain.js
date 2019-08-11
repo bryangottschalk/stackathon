@@ -26,6 +26,22 @@ class SceneMain extends Phaser.Scene {
   }
   preload() {
     this.disableVisibilityChange = true;
+    this.load.spritesheet('fighter', '/images/fighter.png', {
+      frameWidth: 1000,
+      frameHeight: 1000,
+    });
+    this.load.spritesheet('wizard', '/images/wizard.png', {
+      frameWidth: 1000,
+      frameHeight: 1000,
+    });
+    this.load.spritesheet('monster1', '/images/monster1.png', {
+      frameWidth: 1000,
+      frameHeight: 1000,
+    });
+    this.load.spritesheet('monster2', '/images/monster2.png', {
+      frameWidth: 1000,
+      frameHeight: 1000,
+    });
     this.load.image('player1', 'images/player1.png');
     this.load.image('ball', 'images/face.png');
     this.load.audio('pop', ['sounds/pop.wav']);
@@ -61,6 +77,16 @@ class SceneMain extends Phaser.Scene {
     /* GRID */
     // const agrid = new AlignGrid({ scene: this, rows: 11, cols: 11 });
     // agrid.showNumbers();
+
+    /* FIGHTER */
+    // this.fighter = this.add.sprite(
+    //   game.config.width / 2,
+    //   game.config.height / 2,
+    //   'fighter'
+    // );
+    // this.fighter.displayWidth = 150;
+    // this.fighter.scaleY = this.fighter.scaleX;
+    ////////////////////////////////////////////////////////////////////////////
 
     /* TEXT HEADING */
     this.text1 = this.add.text(game.config.width / 2, 50, 'emojipong', {
@@ -103,7 +129,7 @@ class SceneMain extends Phaser.Scene {
       this.player1 = this.physics.add.sprite(
         100,
         game.config.height / 2,
-        'player1'
+        'fighter'
       );
     } else {
       //get x and y from server
@@ -111,11 +137,11 @@ class SceneMain extends Phaser.Scene {
       this.player1 = this.physics.add.sprite(
         100,
         this.state.playerOneState.y,
-        'player1'
+        'fighter'
       );
     }
     console.log(this.player1);
-    this.player1.displayWidth = 100;
+    this.player1.displayWidth = 150;
     this.player1.scaleY = this.player1.scaleX;
     this.player1.setImmovable();
     this.player1.body.collideWorldBounds = true;
@@ -123,9 +149,9 @@ class SceneMain extends Phaser.Scene {
     this.player2 = this.physics.add.sprite(
       980,
       game.config.height / 2,
-      'player1'
+      'wizard'
     );
-    this.player2.displayWidth = 100;
+    this.player2.displayWidth = 150;
     this.player2.scaleY = this.player2.scaleX;
     this.player2.setImmovable();
     this.player2.body.collideWorldBounds = true;
@@ -150,8 +176,10 @@ class SceneMain extends Phaser.Scene {
     ball = this.physics.add.sprite(
       this.state.ball.x,
       this.state.ball.y,
-      'ball'
+      'monster'
     );
+    ball.displayWidth = 10;
+    ball.scaleY = ball.scaleX;
     ball.body.collideWorldBounds = true;
     ball.setVelocity(1000, 100);
     ball.setBounce(1, 0);
@@ -168,10 +196,20 @@ class SceneMain extends Phaser.Scene {
     ball = this.physics.add.sprite(
       game.config.width / 2,
       game.config.height / 2,
-      'ball'
+      'monster'
     );
+    ball.displayWidth = 20;
+    ball.scaleY = ball.scaleX;
 
     ball.body.collideWorldBounds = true;
+
+    this.anims.create({
+      key: 'dance',
+      frames: [{ key: 'monster1', frame: 0 }, { key: 'monster2', frame: 0 }],
+      frameRate: 8,
+      repeat: -1,
+    });
+    ball.play('dance');
 
     this.physics.add.collider(this.player1, ball, () =>
       this.game.sound.play('pop')
