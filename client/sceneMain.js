@@ -42,6 +42,10 @@ class SceneMain extends Phaser.Scene {
       frameWidth: 1000,
       frameHeight: 1000,
     });
+    this.load.spritesheet('fighter', '/images/fighter.png', {
+      frameWidth: 1000,
+      frameHeight: 1000,
+    });
     this.load.spritesheet('monster1', '/images/monster1.png', {
       frameWidth: 1000,
       frameHeight: 1000,
@@ -96,17 +100,18 @@ class SceneMain extends Phaser.Scene {
     this.bouncer1 = this.physics.add.sprite(
       game.config.width / 2,
       (game.config.height * 2) / 3,
-      'ball'
+      'fighter'
     );
     this.bouncer2 = this.physics.add.sprite(
       game.config.width / 2,
       game.config.height / 3,
-      'ball'
+      'fighter'
     );
-    this.bouncer1.displayWidth = 50;
-    this.bouncer1.displayHeight = 50;
-    this.bouncer2.displayWidth = 50;
-    this.bouncer2.displayHeight = 50;
+    this.bouncer1.displayWidth = 75;
+    this.bouncer1.scaleY = this.bouncer1.scaleX;
+    this.bouncer2.displayWidth = 75;
+    this.bouncer2.scaleY = this.bouncer2.scaleX;
+
     this.bouncer1.setVelocityY(this.speed);
     this.bouncer2.setVelocityY(-this.speed);
     this.bouncer1.setImmovable();
@@ -116,16 +121,6 @@ class SceneMain extends Phaser.Scene {
     /* GRID */
     // const agrid = new AlignGrid({ scene: this, rows: 11, cols: 11 });
     // agrid.showNumbers();
-
-    /* FIGHTER */
-    // this.fighter = this.add.sprite(
-    //   game.config.width / 2,
-    //   game.config.height / 2,
-    //   'fighter'
-    // );
-    // this.fighter.displayWidth = 150;
-    // this.fighter.scaleY = this.fighter.scaleX;
-    ////////////////////////////////////////////////////////////////////////////
 
     /* TEXT HEADING */
     this.text1 = this.add.text(game.config.width / 2, 50, 'emojipong', {
@@ -206,29 +201,29 @@ class SceneMain extends Phaser.Scene {
 
     /////////////////////////////////////////////////////////////////
     /* SET UP ATTACKS --> move to archer attack function later */
-    console.log(this.player1, 'player1');
-    this.archerAttack = this.add.sprite(
-      this.player1.x,
-      this.player1.y + 200,
-      'archerAttack'
-    );
-    this.archerAttack.displayWidth = 175;
-    this.archerAttack.displayHeight = 175;
-    this.archerAttack.scaleY = this.archerAttack.scaleX;
-    this.anims.generateFrameNumbers('archerAttack');
-    this.anims.create({
-      key: 'archerAttack',
-      frames: [
-        { key: 'archerAttack', frame: 0 },
-        { key: 'archerAttack', frame: 1 },
-        { key: 'archerAttack', frame: 2 },
-        { key: 'archerAttack', frame: 3 },
-        { key: 'archerAttack', frame: 4 },
-      ],
-      frameRate: 5,
-      repeat: -1,
-    });
-    this.archerAttack.play('archerAttack');
+    // console.log(this.player1, 'player1');
+    // this.archerAttack = this.add.sprite(
+    //   this.player1.x,
+    //   this.player1.y + 200,
+    //   'archerAttack'
+    // );
+    // this.archerAttack.displayWidth = 175;
+    // this.archerAttack.displayHeight = 175;
+    // this.archerAttack.scaleY = this.archerAttack.scaleX;
+    // this.anims.generateFrameNumbers('archerAttack');
+    // this.anims.create({
+    //   key: 'archerAttack',
+    //   frames: [
+    //     { key: 'archerAttack', frame: 0 },
+    //     { key: 'archerAttack', frame: 1 },
+    //     { key: 'archerAttack', frame: 2 },
+    //     { key: 'archerAttack', frame: 3 },
+    //     { key: 'archerAttack', frame: 4 },
+    //   ],
+    //   frameRate: 5,
+    //   repeat: -1,
+    // });
+    // this.archerAttack.play('archerAttack');
     /////////////////////////////////////////////////////////////////
   }
 
@@ -262,7 +257,7 @@ class SceneMain extends Phaser.Scene {
     ball.scaleY = ball.scaleX;
     ball.body.collideWorldBounds = true;
     ball.setVelocity(1000, 1000);
-    ball.setBounce(0.9, 0.9);
+    ball.setBounce(1, 1);
     ball.body.setBounce(1, 0.75);
     this.physics.add.collider(this.player1, ball, () =>
       this.game.sound.play('pop')
@@ -291,7 +286,7 @@ class SceneMain extends Phaser.Scene {
     ball.play('dance');
 
     ball.setVelocity(1000, 1000);
-    ball.setBounce(0.9, 0.9);
+    ball.setBounce(1, 1);
     ball.body.setBounce(1, 0.75);
     this.bumperPhysics();
     this.physics.add.collider(this.player1, ball, () =>
