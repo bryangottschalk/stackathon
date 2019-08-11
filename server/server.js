@@ -13,6 +13,8 @@ const state = {
   },
   playerOneState: {
     direction: null,
+    x: 100,
+    y: 360,
   },
   playerTwoState: {
     direction: null,
@@ -78,6 +80,10 @@ io.on('connection', socket => {
   socket.on('ballMoved', (ballX, ballY) => {
     state.ball.x = ballX;
     state.ball.y = ballY;
+  });
+  socket.on('p1moved', (p1x, p1y) => {
+    state.playerOneState.x = p1x;
+    state.playerOneState.y = p1y;
   });
 });
 
