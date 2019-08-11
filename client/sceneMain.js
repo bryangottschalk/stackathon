@@ -286,7 +286,7 @@ class SceneMain extends Phaser.Scene {
     ball.displayWidth = 115;
     ball.scaleY = ball.scaleX;
     ball.body.collideWorldBounds = true;
-    ball.setVelocity(800, 800);
+    ball.setVelocity(700, 700);
     ball.setBounce(1, 1);
     ball.body.setBounce(1, 1);
     this.physics.add.collider(this.player1, ball, () =>
@@ -315,7 +315,7 @@ class SceneMain extends Phaser.Scene {
     });
     ball.play('dance');
 
-    ball.setVelocity(800, 800);
+    ball.setVelocity(700, 700);
     ball.setBounce(1, 1);
     ball.body.setBounce(1, 1);
     this.physics.add.collider(this.player1, ball, () =>
@@ -337,14 +337,14 @@ class SceneMain extends Phaser.Scene {
     }
 
     if (this.state.playerOneState.direction === 'up') {
-      this.player1.y -= 10;
+      this.player1.y -= 20;
     } else if (this.state.playerOneState.direction === 'down') {
-      this.player1.y += 10;
+      this.player1.y += 20;
     }
     if (this.state.playerTwoState.direction === 'up') {
-      this.player2.y -= 10;
+      this.player2.y -= 20;
     } else if (this.state.playerTwoState.direction === 'down') {
-      this.player2.y += 10;
+      this.player2.y += 20;
     }
 
     if (this.isFirstPlayer) {
