@@ -53,17 +53,8 @@ class SceneMain extends Phaser.Scene {
       frameWidth: 1000,
       frameHeight: 1000,
     });
-    this.load.spritesheet('monster1', '/images/monster1.png', {
-      frameWidth: 1000,
-      frameHeight: 1000,
-    });
-    this.load.spritesheet('monster2', '/images/monster2.png', {
-      frameWidth: 1000,
-      frameHeight: 1000,
-    });
+    this.load.image('orb', 'images/orb.png');
     this.load.image('forest', 'images/forest-background.png');
-    this.load.image('player1', 'images/player1.png');
-    this.load.image('ball', 'images/face.png');
     this.load.audio('pop', ['sounds/pop.wav']);
     this.load.audio('arcade-music', ['sounds/arcade-music.wav']);
 
@@ -124,7 +115,6 @@ class SceneMain extends Phaser.Scene {
     }
 
     /* SCORE */
-
     this.score1 = this.add.text(
       50,
       50,
@@ -271,19 +261,15 @@ class SceneMain extends Phaser.Scene {
   getBall() {
     //player 2
     //receives ball state from server and creates a new ball with those x and y coordinates
-    ball = this.physics.add.sprite(
-      this.state.ball.x,
-      this.state.ball.y,
-      'ball'
-    );
-    this.anims.create({
-      key: 'dance',
-      frames: [{ key: 'monster1', frame: 0 }, { key: 'monster2', frame: 0 }],
-      frameRate: 8,
-      repeat: -1,
-    });
-    ball.play('dance');
-    ball.displayWidth = 115;
+    ball = this.physics.add.sprite(this.state.ball.x, this.state.ball.y, 'orb');
+    // this.anims.create({
+    //   key: 'dance',
+    //   frames: [{ key: 'monster1', frame: 0 }, { key: 'monster2', frame: 0 }],
+    //   frameRate: 8,
+    //   repeat: -1,
+    // });
+    // ball.play('dance');
+    ball.displayWidth = 150;
     ball.scaleY = ball.scaleX;
     ball.body.collideWorldBounds = true;
     ball.setVelocity(600, 600);
@@ -300,20 +286,20 @@ class SceneMain extends Phaser.Scene {
     ball = this.physics.add.sprite(
       game.config.width / 2,
       game.config.height / 2,
-      'ball'
+      'orb'
     );
-    ball.displayWidth = 100;
+    ball.displayWidth = 150;
     ball.scaleY = ball.scaleX;
 
     ball.body.collideWorldBounds = true;
 
-    this.anims.create({
-      key: 'dance',
-      frames: [{ key: 'monster1', frame: 0 }, { key: 'monster2', frame: 0 }],
-      frameRate: 4,
-      repeat: -1,
-    });
-    ball.play('dance');
+    // this.anims.create({
+    //   key: 'dance',
+    //   frames: [{ key: 'monster1', frame: 0 }, { key: 'monster2', frame: 0 }],
+    //   frameRate: 4,
+    //   repeat: -1,
+    // });
+    // ball.play('dance');
 
     ball.setVelocity(600, 600);
     ball.setBounce(1, 1);
