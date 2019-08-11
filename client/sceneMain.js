@@ -35,7 +35,17 @@ class SceneMain extends Phaser.Scene {
   }
 
   create() {
-    this.game.sound.play('arcade-music');
+    const music = this.sound.add('arcade-music');
+    const musicConfig = {
+      mute: false,
+      volume: 0.5,
+      rate: 1.05,
+      detune: 0,
+      seek: 0,
+      loop: true,
+      delay: 0,
+    };
+    music.play(musicConfig);
     if (this.state.playerCount === 1) {
       this.isFirstPlayer = true;
     }
