@@ -59,7 +59,7 @@ io.on('connection', socket => {
   // handle messages from any client
   socket.emit(
     'message',
-    `Welcome from the server! Emojipong fully supports trash talk so have at it.`
+    `Welcome! Forestpong fully supports trash talk so have at it.`
   ); // emits to one person
   socket.on('message', text => {
     //handle messages from single client

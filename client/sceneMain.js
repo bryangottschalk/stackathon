@@ -1,3 +1,4 @@
+/* eslint-disable complexity */
 /* eslist-disable no-undef */
 
 class SceneMain extends Phaser.Scene {
@@ -23,11 +24,9 @@ class SceneMain extends Phaser.Scene {
         y: 0,
       },
       bumper1: {
-        x: game.config.width / 2,
         y: 0,
       },
       bumper2: {
-        x: game.config.width / 2,
         y: 0,
       },
     };
@@ -102,30 +101,6 @@ class SceneMain extends Phaser.Scene {
       this.setPlayerMoveState('down')
     );
     this.input.keyboard.on('keyup_DOWN', () => this.setPlayerMoveState(null));
-
-    /* BOUNCERS */
-
-    // this.speed = 100;
-    // this.bouncer1 = this.physics.add.sprite(
-    //   game.config.width / 2,
-    //   (game.config.height * 2) / 3,
-    //   'fighter'
-    // );
-    // this.bouncer2 = this.physics.add.sprite(
-    //   game.config.width / 2,
-    //   game.config.height / 3,
-    //   'fighter'
-    // );
-    // this.bouncer1.displayWidth = 75;
-    // this.bouncer1.scaleY = this.bouncer1.scaleX;
-    // this.bouncer2.displayWidth = 75;
-    // this.bouncer2.scaleY = this.bouncer2.scaleX;
-
-    // this.bouncer1.setVelocityY(this.speed);
-    // this.bouncer2.setVelocityY(-this.speed);
-    // this.bouncer1.setImmovable();
-    // this.bouncer2.setImmovable();
-    ////////////////////////////////////////////////////////////////////////////
 
     /* GRID */
     // const agrid = new AlignGrid({ scene: this, rows: 11, cols: 11 });
@@ -262,21 +237,17 @@ class SceneMain extends Phaser.Scene {
     this.bumper2.setVelocityY(-this.speed);
     this.bumper1.setImmovable();
     this.bumper2.setImmovable();
-    this.physics.add.collider(this.bumper1, ball, () =>
-      console.log('hit bumper 1')
-    );
-    this.physics.add.collider(this.bumper2, ball, () =>
-      console.log('hit bumper 2')
-    );
+    this.physics.add.collider(this.bumper1, ball);
+    this.physics.add.collider(this.bumper2, ball);
   }
   getBumpers() {
     this.bumper1 = this.physics.add.sprite(
-      this.state.bumper1.x,
+      game.config.width / 2,
       this.state.bumper1.y,
       'fighter'
     );
     this.bumper2 = this.physics.add.sprite(
-      this.state.bumper2.x,
+      game.config.width / 2,
       this.state.bumper2.y,
       'fighter'
     );
@@ -285,16 +256,16 @@ class SceneMain extends Phaser.Scene {
     this.bumper2.displayWidth = 75;
     this.bumper2.scaleY = this.bumper2.scaleX;
 
-    this.bumper1.setVelocityY(this.speed);
-    this.bumper2.setVelocityY(-this.speed);
-    this.bumper1.setImmovable();
-    this.bumper2.setImmovable();
-    this.physics.add.collider(this.bumper1, ball, () =>
-      console.log('hit bumper 1')
-    );
-    this.physics.add.collider(this.bumper2, ball, () =>
-      console.log('hit bumper 2')
-    );
+    // this.bumper1.setVelocityY(this.speed);
+    // this.bumper2.setVelocityY(-this.speed);
+    // this.bumper1.setImmovable();
+    // this.bumper2.setImmovable();
+    // this.physics.add.collider(this.bumper1, ball, () =>
+    //   console.log('hit bumper 1')
+    // );
+    // this.physics.add.collider(this.bumper2, ball, () =>
+    //   console.log('hit bumper 2')
+    // );
   }
 
   getBall() {
@@ -357,6 +328,7 @@ class SceneMain extends Phaser.Scene {
   archerAttack() {}
 
   // eslint-disable-next-line complexity
+  // eslint-disable-next-line max-statements
   update() {
     this.score1.setText(`p1 score: ${this.state.score.player1}`);
     this.score2.setText(`p2 score: ${this.state.score.player2}`);
@@ -382,7 +354,8 @@ class SceneMain extends Phaser.Scene {
     } else {
       ball.x = this.state.ball.x;
       ball.y = this.state.ball.y;
-      this.bumper1.y = this.state.ball.y;
+      this.bumper1.y = this.state.bumper1.y;
+      this.bumper2.y = this.state.bumper2.y;
     }
 
     if (this.isFirstPlayer && this.state.playerCount > 1) {
@@ -397,16 +370,16 @@ class SceneMain extends Phaser.Scene {
       }
     }
 
-    if (this.bumper1.y > this.game.config.height) {
+    if (this.isFirstPlayer && this.bumper1.y > this.game.config.height) {
       this.bumper1.setVelocityY(-this.speed);
     }
-    if (this.bumper1.y < 0) {
+    if (this.isFirstPlayer && this.bumper1.y < 0) {
       this.bumper1.setVelocityY(this.speed);
     }
-    if (this.bumper2.y > this.game.config.height) {
+    if (this.isFirstPlayer && this.bumper2.y > this.game.config.height) {
       this.bumper2.setVelocityY(-this.speed);
     }
-    if (this.bumper2.y < 0) {
+    if (this.isFirstPlayer && this.bumper2.y < 0) {
       this.bumper2.setVelocityY(this.speed);
     }
   }
