@@ -140,10 +140,10 @@ class SceneMain extends Phaser.Scene {
       'ball'
     );
     ball.body.collideWorldBounds = true;
-    ball.setVelocity(1000, 100);
+    ball.setVelocity(1500, 100);
     ball.setBounce(1, 0);
     ball.body.setBounce(1, 1);
-    ball.setGravityX(200);
+    ball.setGravityX(500);
     this.physics.add.collider(this.player1, ball, () =>
       this.game.sound.play('pop')
     );
@@ -167,10 +167,10 @@ class SceneMain extends Phaser.Scene {
       this.game.sound.play('pop')
     );
 
-    ball.setVelocity(1000, 100);
+    ball.setVelocity(1500, 100);
     ball.setBounce(1, 0);
     ball.body.setBounce(1, 1);
-    ball.setGravityX(200); // green line on dev mode shows where the gravity's going
+    ball.setGravityX(500); // green line on dev mode shows where the gravity's going
   }
 
   // eslint-disable-next-line complexity
