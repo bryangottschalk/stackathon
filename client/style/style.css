@@ -1,0 +1,26 @@
+body {
+  font-family: sans-serif;
+}
+li {
+  padding-top: 5px;
+  list-style: none;
+  color: green;
+}
+
+ul {
+  margin: 0;
+  padding: 10px 0px 0px 0px;
+}
+
+h1 {
+  color: darkgreen;
+}
+
+.wrapper {
+  display: flex;
+  /* justify-content: space-evenly; */
+}
+
+#phaser-game {
+  padding-right: 30px;
+}
